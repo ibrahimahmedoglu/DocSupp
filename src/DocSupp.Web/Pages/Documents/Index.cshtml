@@ -1,0 +1,126 @@
+﻿@page
+@model DocSupp.Web.Pages.Documents.IndexModel
+@{
+}
+@addTagHelper *, Westwind.AspNetCore.Markdown
+@section styles {
+    <abp-style src="/Pages/Documents/Index.css" />
+}
+@section scripts {
+    <abp-script src="/Pages/Documents/Index.js" />
+
+}
+
+<div class="wrapper ">
+
+
+
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+        <div class="dropdown show" style="margin:15px; ">
+            <a class="btn btn-secondary dropdown-toggle" style="background-color: white; color: #6d7fcc " href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Choose Your Project
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                @for (int i = 0; i < Model.Projects.Count; i++)
+                {
+                    <a class="dropdown-item" asp-page="Index" asp-route-ProjectIndex=@i>@Model.Projects[i].Name</a>
+
+                }
+
+
+            </div>
+        </div>
+
+
+
+
+        <div class="sidebar-header">
+            <h3>@Model.Title</h3>
+
+
+        </div>
+
+
+
+
+        <ul class="list-unstyled components">
+            <li class="active">
+                @foreach (var item in Model.Navs.Items)
+                {
+                    String path;
+                    if (item.path != null)
+                    {
+                        path = item.path;
+                    <li class="active">
+                        <a asp-page="Index" asp-route-Pageid="@path" asp-route-ProjectIndex=@Model.ListIndex>@item.text</a>
+
+
+                    </li>
+                }
+                else
+                {
+                    String href1 = item.text;
+                    String id1 = "#" + href1;
+                    <li class="active">
+                        <a href=@id1 data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">@item.text</a>
+
+
+                        <ul class="collapse list-unstyled" id=@href1>
+                            @for (int i = 0; i < item.Items.Length; i++)
+                            {
+                                path = item.Items[i].path;
+                                if (item.Items[i].path != null && item.Items[i].Items == null)
+                                {
+                                    <li>
+                                        <a asp-page="Index" asp-route-Pageid="@path" asp-route-ProjectIndex=@Model.ListIndex>   - @item.Items[i].text</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    String href2 = item.Items[i].text;
+                                    String id2 = "#" + href2;
+                                    <li>
+                                        <a href=@id2 data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">   - @item.Items[i].text</a>
+                                    </li>
+                                    foreach (var nestedItem in item.Items[i].Items)
+                                    {
+                                        path = nestedItem.path;
+                                        <ul class="collapse list-unstyled" id=@href2>
+                                            <li>
+                                                <a asp-page="Index" asp-route-Pageid="@path" asp-route-ProjectIndex=@Model.ListIndex>@nestedItem.text </a>
+                                            </li>
+                                        </ul>
+                                    }
+
+
+                                }
+
+                            }
+
+
+
+
+
+                        </ul>
+
+
+
+                    </li>
+                }
+
+
+            }
+
+            </ul>
+
+
+        </nav>
+
+
+        <!-- Page Content  -->
+        <div class="col-7">
+            <markdown>@Model.printPage</markdown>
+        </div>
+    </div>
